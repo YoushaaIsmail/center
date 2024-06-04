@@ -1,0 +1,113 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block content %}
+<!--------main-content------------->
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-wrapper">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
+              <h2 class="ml-lg-2">Manage Appointments</h2>
+            </div>
+            <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
+              <!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+              <i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->
+            </div>
+          </div>
+        </div>
+        <form action="{% url 'centerapp:Rcreateappointmentcli' %}"  method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h4>patient email</h4>
+        <h5>{{user.email}}</h5>
+        <input type="hidden" name="pgmail" value="{{user.id}}">
+        <h4>doctors</h4>
+        <h5>{{Therapist.name}}</h5>
+        <input type="hidden" value="{{Therapist.id}}" name="idDoc">
+        <h4>Device</h4>
+        <h5>{{Device.name}}</h5>
+        <input type="hidden" value="{{Device.id}}" name="idDev">
+        <h2>Appointment</h2>
+        <div class="form-group">
+          <div id="appointmentContainer"></div>
+
+<input type="button" class="btn btn-default" data-dismiss="modal" value="Previous" onclick="showPreviousAppointment()">
+<input type="button" class="btn btn-default" data-dismiss="modal" value="Next" onclick="showNextAppointment()">
+
+        </div>
+        <input type="hidden" name="Date"/>
+        <input type="hidden" name="time"/>
+        
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-success" value="Add">
+        </div>
+      </form>
+      <!---footer---->
+    </div>
+    <footer class="footer">
+      <div class="container-fluid">
+        <div class="footer-in">
+          <p class="mb-0">&copy 2020 Vishweb design - All Rights Reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+<script>
+  var av_app_date = {{ av_app_date|safe }};
+  var currentAppointmentIndex = 0;
+  function displayAppointment() {
+  var appointment = av_app_date[currentAppointmentIndex];
+  var day = appointment.Day;
+  var timeSlots = appointment.time_sort;
+
+  var appointmentContainer = document.getElementById('appointmentContainer');
+  appointmentContainer.innerHTML = '';
+
+  // Display the day
+  var dayElement = document.createElement('h2');
+  dayElement.textContent = day;
+  appointmentContainer.appendChild(dayElement);
+
+  // Display the time slots
+  var timeSlotsElement = document.createElement('div');
+  timeSlots.forEach(function(timeSlot, index) {
+    var radioElement = document.createElement('input');
+    radioElement.type = 'radio';
+    radioElement.name = 'time-slot';
+    radioElement.value = timeSlot;
+    radioElement.addEventListener('change', function() {
+      // Update the hidden input fields
+      document.querySelector('input[name="Date"]').value = day;
+      document.querySelector('input[name="time"]').value = this.value;
+    });
+
+    var labelElement = document.createElement('label');
+    labelElement.textContent = timeSlot;
+
+    var timeSlotElement = document.createElement('div');
+    timeSlotElement.appendChild(radioElement);
+    timeSlotElement.appendChild(labelElement);
+    timeSlotsElement.appendChild(timeSlotElement);
+  });
+  appointmentContainer.appendChild(timeSlotsElement);
+}
+  function showPreviousAppointment() {
+    if (currentAppointmentIndex > 0) {
+      currentAppointmentIndex--;
+      displayAppointment();
+    }
+  }
+
+  function showNextAppointment() {
+    if (currentAppointmentIndex < av_app_date.length - 1) {
+      currentAppointmentIndex++;
+      displayAppointment();
+    }
+  }
+
+  // Display the initial appointment
+  displayAppointment();
+</script>{% endblock %}

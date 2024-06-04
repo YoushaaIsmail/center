@@ -1,0 +1,379 @@
+{% extends 'base.html'%}
+{% load static%}
+
+{% block content%}
+<!--------main-content------------->
+		   
+		   <div class="main-content">
+			  <div class="row">
+			    
+				<div class="col-md-12">
+				<div class="table-wrapper">
+    <div class="table-title">
+      <div class="row">
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
+          <h2 class="ml-lg-2">Manage Paitent</h2>
+        </div>
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
+          <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+		  <i class="material-icons">&#xE147;</i> <span>Add New Paitent</span></a>
+          <!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+		  <i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->
+        </div>
+      </div>
+    </div>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>
+            <span class="custom-checkbox">
+								<input type="checkbox" id="selectAll">
+								<label for="selectAll"></label>
+							</span>
+          </th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>birthday</th>
+          <th>gender</th>
+          <th>address</th>
+          <th>phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in patient %}
+        <tr>
+          <td>
+            <!-- <span class="custom-checkbox">
+			 <input type="checkbox" id="checkbox1" name="options[]" value="1"> 
+			<label for="checkbox1"></label>
+							</span> -->
+    <a class="btn" data-toggle="modal" href="#chatuser" onclick="setchat('{{i.photo.url}}','{{i.name}}')">
+  <img src="{{ i.photo.url }}" style="width:60px; height: 60px; border-radius:20%;" />
+  <span class="xp-user-live"></span>
+</a>
+<input name="sender" type="hidden" value="{{user.username}}"/>
+<input name="recipient" type="hidden" value="{{i.name}}"/>
+          </td>
+          <td>{{i.name}}</td>
+          <td>{{i.email}}</td>
+          <td>{{i.birthday}}</td>
+          <td>{{i.address}}</td>
+          <td>{{i.gender}}</td>
+          <td>{{i.phone}}</td>
+          <td>
+            <a href="{% url 'centerapp:getpatient1' idpa=i.id %}">
+              <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+      <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" onclick="setDeleteId('{{ i.id }}')">
+        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+          </td>
+        </tr>{% endfor %}
+        
+      </tbody>
+    </table>
+    <div class="clearfix">
+      <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+      <ul class="pagination">
+        <li class="page-item disabled"><a href="#">Previous</a></li>
+        <li class="page-item active"><a href="#" class="page-link">1</a></li>
+        <li class="page-item"><a href="#" class="page-link">2</a></li>
+        <li class="page-item "><a href="#" class="page-link">3</a></li>
+        <li class="page-item"><a href="#" class="page-link">4</a></li>
+        <li class="page-item"><a href="#" class="page-link">5</a></li>
+        <li class="page-item"><a href="#" class="page-link">Next</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="chatuser" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+    <style>
+    /* body {
+      margin: 0;
+      padding: 0;
+      background: #dfb7b7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+     */
+    .message-header {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #b0f8cd;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .user-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    .user-name {
+      margin: 0;
+      font-size: 16px;
+    }
+    
+    #messages {
+      width: 100%;
+      height: 450px;
+      background: #52eb8f;
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    
+    #sendMsg {
+      width: 100%;
+      height: 50px;
+      background: #AAA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #msgTxt {
+      width: calc(100% - 100px);
+      height: 100%;
+      padding-left: 10px;
+      box-sizing: border-box;
+    }
+    
+    #msgBtn {
+      width: 100px;
+      height: 100%;
+    }
+    
+    .outer {
+      width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+    }
+    
+    #inner {}
+    #dltMsg{
+            box-sizing: border-box;
+            border-radius:10px;
+            margin-left: 10px;
+
+        }
+
+    
+    .me {
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: 10px;
+      background: #8800FF;
+      color: #fff;
+      justify-content: flex-end;
+    }
+    
+    .notMe {
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: 10px;
+      background: #FFF;
+      color: #000;
+    }
+    </style>
+
+  <div class="message-header">
+    <img alt="User Photo" class="user-photo" id="ChatImg">
+    <h3 class="user-name" id="Chatname"></h3>
+
+  </div>
+    <div id="messages">
+      
+    </div>
+
+    <div id="sendMsg">
+        <input type="text" id="msgTxt" placeholder="ENTER YOUR MSG...">
+        <input type="submit" id="msgBtn" value="send" onclick="module.sendMsg()">
+    </div>
+
+    <script>
+      module = {};
+    </script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+      import { getDatabase, ref, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    
+      const firebaseConfig = {
+        apiKey: "AIzaSyCZlU0RyfTU1Qwx4ZpAaqCBbv03UzXZO-c",
+        authDomain: "mycliproject-85e32.firebaseapp.com",
+        projectId: "mycliproject-85e32",
+        storageBucket: "mycliproject-85e32.appspot.com",
+        messagingSenderId: "559508642472",
+        appId: "1:559508642472:web:0bdf65ae194ba4daa0809d"
+      };
+    
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+    
+      // variables
+      var msgTxt = document.getElementById('msgTxt');
+    
+      // Get values from input fields
+      var sender = document.querySelector('input[name="sender"]').value;
+      var recipient = document.querySelector('input[name="recipient"]').value;
+    
+      // TO SEND MESSAGES
+      module.sendMsg = function sendMsg() {
+        var msg = msgTxt.value;
+    
+        var timestamp = new Date().getTime();
+        set(ref(db, "messages/" + timestamp), {
+          msg: msg,
+          sender: sender,
+          recipient: recipient
+        });
+    
+        msgTxt.value = "";
+        document.getElementById('recipient').value = "";
+      }
+    
+      // TO RECEIVE MSG
+      onChildAdded(ref(db, "messages"), (data) => {
+        if (data.val().sender === sender || data.val().recipient === sender) {
+          var messageDiv = document.createElement("div");
+          messageDiv.style.justifyContent = data.val().sender === sender ? "flex-end" : "flex-start";
+          messageDiv.classList.add("outer");
+          messageDiv.id = data.key;
+    
+          var innerDiv = document.createElement("div");
+          innerDiv.classList.add("inner", data.val().sender === sender ? "me" : "notMe");
+          innerDiv.textContent = `${data.val().sender === sender ? 'You' : data.val().sender}: ${data.val().msg}`;
+    
+          var deleteButton = document.createElement("button");
+          deleteButton.id = "dltMsg";
+          deleteButton.innerHTML = '<i class="material-icons" style="color:gray">&#xE872;</i>';
+          deleteButton.onclick = () => module.dltMsg(data.key);
+    
+          innerDiv.appendChild(deleteButton);
+          messageDiv.appendChild(innerDiv);
+          messages.appendChild(messageDiv);
+        }
+      });
+    
+      // TO DELETE MSG
+      module.dltMsg = function dltMsg(key) {
+        remove(ref(db, "messages/" + key));
+      }
+    
+      // WHEN MSG IS DELETED
+      onChildRemoved(ref(db, "messages"), (data) => {
+        var msgBox = document.getElementById(data.key);
+        messages.removeChild(msgBox);
+      })
+    </script>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal HTML -->
+<div id="addEmployeeModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{% url 'centerapp:createpatient' %}"  method="post" enctype="multipart/form-data">
+        {% csrf_token %} 
+        <div class="modal-header">
+          <h4 class="modal-title">Add Patient</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Img:</label>
+            <input type="file" name="photo" required>
+          </div>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label>gender</label>
+            <input type="text" class="form-control" name="gender" required>
+          </div>
+          <div class="form-group">
+            <label>email</label>
+            <input type="text" class="form-control" name="email" required>
+          </div>
+          <div class="form-group">
+            <label>birthday</label>
+            <input type="date" class="form-control" name="birthday" required>
+          </div>
+          <div class="form-group">
+            <label>address</label>
+            <input type="text" class="form-control" name="address" required>
+          </div>
+          <div class="form-group">
+            <label>phone</label>
+            <input type="text" class="form-control" name="phone" required>
+          </div>
+         
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+          <input type="submit" class="btn btn-success" value="Add">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal HTML -->
+<div id="deleteEmployeeModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{% url 'centerapp:deletepatient' %}"  method="post" enctype="multipart/form-data">
+        {% csrf_token %} 
+        <input type="hidden" name="iddoctor" id="iddoctor1">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete Patient</h4>
+          <button type="button" class="close" data-dismiss="modal" 
+		  aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete these Records?</p>
+          <p class="text-warning"><small>This action cannot be undone.</small></p>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+          <input type="submit" class="btn btn-danger" value="Delete">
+        </div>
+      </form>
+    </div>
+	</div>
+  </div>
+				
+		   
+			  </div>
+			 
+			 
+			 <!---footer---->
+			 
+			 
+		</div>
+		
+		<footer class="footer">
+			    <div class="container-fluid">
+				  <div class="footer-in">
+                    <p class="mb-0">&copy 2020 Vishweb design - All Rights Reserved.</p>
+                </div>
+				</div>
+			 </footer>
+</div>
+</div>
+<script>
+
+</script>
+{% endblock %}

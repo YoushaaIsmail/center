@@ -1,0 +1,60 @@
+{% extends 'base1.html'%}
+{% load static%}
+
+{% block content%}
+<!--------main-content------------->
+		   
+		   <div class="main-content">
+			  <div class="row">
+			    
+				<div class="col-md-12">
+				<div class="table-wrapper">
+    <div class="table-title">
+      <div class="row">
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
+          <h2 class="ml-lg-2">Manage Appointments</h2>
+        </div>
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
+
+          <!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+		  <i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->
+        </div>
+      </div>
+    </div>
+    <form action="{% url 'centerapp:Rshowappointment' %}"  method="post" enctype="multipart/form-data">
+      {% csrf_token %} 
+    <h2>patiment gmail</h2>
+    <input type="email" name="pgmail">
+    <h2>doctors</h2>
+      <div class="form-group">
+        <select name="idDoc">
+          <option value="">Select Doctor</option>
+          
+          {% for i in doctors %}
+          <option value="{{i.id}}">{{i.name}}</option>
+          {% endfor %}
+        </select>
+       
+          </div>
+          <div class="modal-footer">
+
+            <input type="submit" class="btn btn-success" value="Check">
+          </div>
+  </form>
+			 
+			 <!---footer---->
+			 
+			 
+		</div>
+		
+		<footer class="footer">
+			    <div class="container-fluid">
+				  <div class="footer-in">
+                    <p class="mb-0">&copy 2020 Vishweb design - All Rights Reserved.</p>
+                </div>
+				</div>
+			 </footer>
+</div>
+</div>
+
+{% endblock %}

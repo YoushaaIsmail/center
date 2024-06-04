@@ -1,0 +1,117 @@
+{% extends 'base.html'%}
+{% load static%}
+
+{% block content%}
+<!--------main-content------------->
+		   
+		   <div class="main-content">
+			  <div class="row">
+			    
+				<div class="col-md-12">
+				<div class="table-wrapper">
+    <div class="table-title">
+      <div class="row">
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
+          <h2 class="ml-lg-2">Manage offers</h2>
+        </div>
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
+
+          <!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+		  <i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->
+        </div>
+      </div>
+    </div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form  method="post" enctype="multipart/form-data">
+          {% csrf_token %} 
+          <div class="modal-header">
+            <h4 class="modal-title">Edit offer</h4>
+            
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group">
+           
+              <label>   <img src="{{offer.Img1.url}}" style="width:60px; height: 60px; border-radius:20%;"/>
+								<span class="xp-user-live"></span></label>
+              <input type="file" name="Img">
+            </div>
+           
+             
+            <div class="form-group">
+              <label>durtion</label>
+              <input type="text" class="form-control" name="durtion" value="{{offer.durtion}}" required>
+            </div>
+            <div class="form-group">
+              <select name="doctor">
+                <option value="{{offer.doctor.id}}">{{offer.doctor.name}}</option>
+                
+                {% for i in doctors %}
+                <option value="{{i.id}}">{{i.name}}</option>
+                {% endfor %}
+              </select>
+                </div>    
+                <div class="form-group">
+                  <select name="clinice">
+                    <option value="{{offer.sevice.id}}">{{offer.sevice.name}}</option>
+                    
+                    {% for i in clinics %}
+                    <option value="{{i.id}}">{{i.name}}</option>
+                    {% endfor %}
+                  </select>
+                    </div>
+                          <div class="form-group">
+              <label>date</label>
+    <p class="form-control" style="background-color:gray">
+                {{offer.date}}</p>
+              <input type="date" class="form-control" name="date"  required>
+            </div>            <div class="form-group">
+              <label>discount</label>
+              <input type="text" class="form-control" name="discount" value="{{offer.discount}}" required>
+            </div>            <div class="form-group">
+              <label>oldprice</label>
+              <input type="text" class="form-control" name="oldprice" value="{{offer.oldprice}}" required>
+            </div>            <div class="form-group">
+              <label>name</label>
+              <input type="text" class="form-control" name="name" value="{{offer.name}}" required>
+            </div>        
+
+
+          
+          </div>
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+            <input type="submit" class="btn btn-success" value="Edite">
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+				
+		   
+			  </div>
+	 
+			 
+			 <!---footer---->
+			 
+			 
+		</div>
+		
+		<footer class="footer">
+			    <div class="container-fluid">
+				  <div class="footer-in">
+                    <p class="mb-0">&copy 2020 Vishweb design - All Rights Reserved.</p>
+                </div>
+				</div>
+			 </footer>
+</div>
+</div>
+
+{% endblock %}

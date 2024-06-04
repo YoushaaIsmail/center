@@ -1,0 +1,98 @@
+{% extends 'base.html'%}
+{% load static%}
+
+{% block content%}
+<!--------main-content------------->
+		   
+		   <div class="main-content">
+			  <div class="row">
+			    
+				<div class="col-md-12">
+				<div class="table-wrapper">
+    <div class="table-title">
+      <div class="row">
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
+          <h2 class="ml-lg-2">Manage Employees</h2>
+        </div>
+        <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
+
+          <!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+		  <i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->
+        </div>
+      </div>
+    </div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form  method="post" enctype="multipart/form-data">
+          {% csrf_token %} 
+          <div class="modal-header">
+            <h4 class="modal-title">Edit about</h4>
+            
+          </div>
+
+          <div class="modal-body">
+
+           
+             
+            <div class="form-group">
+              <label>whatsapp</label>
+              <input type="text" class="form-control" name="whatsapp" value="{{about.whatsapp}}" required>
+            </div>
+            <div class="form-group">
+              <label>Instagram</label>
+              <input type="text" class="form-control" name="Instagram" value="{{about.Instagram}}" required>
+            </div>            <div class="form-group">
+              <label>Youtube</label>
+              <input type="text" class="form-control" name="Youtube" value="{{about.youtube}}" required>
+            </div>            <div class="form-group">
+              <label>fasebook</label>
+              <input type="text" class="form-control" name="facebook" value="{{about.fasebook}}" required>
+            </div>            <div class="form-group">
+              <label>country</label>
+              <input type="text" class="form-control" name="country" value="{{about.loction.country}}" required>
+            </div>            <div class="form-group">
+              <label>lat</label>
+              <input type="text" class="form-control" name="lat" value="{{about.loction.lat}}" required>
+            </div>        
+            <div class="form-group">
+              <label>long</label>
+              <input type="text" class="form-control" name="long" value="{{about.loction.long}}" required>
+            </div>   
+
+          
+          </div>
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+            <input type="submit" class="btn btn-success" value="Edite">
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+				
+		   
+			  </div>
+	 
+			 
+			 <!---footer---->
+			 
+			 
+		</div>
+		
+		<footer class="footer">
+			    <div class="container-fluid">
+				  <div class="footer-in">
+                    <p class="mb-0">&copy 2020 Vishweb design - All Rights Reserved.</p>
+                </div>
+				</div>
+			 </footer>
+</div>
+</div>
+
+{% endblock %}

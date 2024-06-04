@@ -1,0 +1,196 @@
+{% load static%}
+<div id="chatuser" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+    <style>
+    /* body {
+      margin: 0;
+      padding: 0;
+      background: #dfb7b7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+     */
+    .message-header {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #b0f8cd;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .user-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    .user-name {
+      margin: 0;
+      font-size: 16px;
+    }
+    
+    #messages {
+      width: 100%;
+      height: 450px;
+      background: #52eb8f;
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    
+    #sendMsg {
+      width: 100%;
+      height: 50px;
+      background: #AAA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #msgTxt {
+      width: calc(100% - 100px);
+      height: 100%;
+      padding-left: 10px;
+      box-sizing: border-box;
+    }
+    
+    #msgBtn {
+      width: 100px;
+      height: 100%;
+    }
+    
+    .outer {
+      width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+    }
+    
+    #inner {
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: 10px;
+    }
+    
+    .me {
+      justify-content: flex-end;
+      background: #8800FF;
+      color: #fff;
+    }
+    
+    .notMe {
+      background: #FFF;
+      color: #000;
+    }
+    </style>
+
+  <div class="message-header">
+    <img src="{%static 'img/user.jpg'%}"alt="User Photo" class="user-photo">
+    <h3 class="user-name">John Doe</h3>
+
+  </div>
+    <div id="messages">
+      
+    </div>
+
+    <div id="sendMsg">
+        <input type="text" id="msgTxt" placeholder="ENTER YOUR MSG...">
+        <input type="submit" id="msgBtn" value="send" onclick="module.sendMsg()">
+    </div>
+
+    <script>
+        module = {};
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCZlU0RyfTU1Qwx4ZpAaqCBbv03UzXZO-c",
+  authDomain: "mycliproject-85e32.firebaseapp.com",
+  projectId: "mycliproject-85e32",
+  storageBucket: "mycliproject-85e32.appspot.com",
+  messagingSenderId: "559508642472",
+  appId: "1:559508642472:web:0bdf65ae194ba4daa0809d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // variables
+        var msgTxt = document.getElementById('msgTxt');
+        var sender;
+        if(sessionStorage.getItem('sender')){
+            sender = sessionStorage.getItem('sender');
+        } else {
+            sender = prompt('PLEASE ENTER YOUR NAME');
+            sessionStorage.setItem('sender',sender);
+        }
+        var recipient ;
+        if(sessionStorage.getItem('recipient')){
+          recipient = sessionStorage.getItem('recipient');
+        } else {
+          recipient = prompt('PLEASE ENTER YOUR recipient');
+            sessionStorage.setItem('recipient',recipient);
+        }
+
+
+        // TO SEND MESSAGES
+        module.sendMsg = function sendMsg() {
+  var msg = msgTxt.value;
+  
+  var timestamp = new Date().getTime();
+  set(ref(db, "messages/" + timestamp), {
+    msg: msg,
+    sender: sender,
+    recipient: recipient
+  });
+
+  msgTxt.value = "";
+  document.getElementById('recipient').value = "";
+}
+        // TO RECEIVE MSG
+        onChildAdded(ref(db, "messages"), (data) => {
+  if (data.val().sender === sender || data.val().recipient === sender) {
+    var messageDiv = document.createElement("div");
+    messageDiv.style.justifyContent = data.val().sender === sender ? "flex-end" : "flex-start";
+    messageDiv.classList.add("outer");
+    messageDiv.id = data.key;
+
+    var innerDiv = document.createElement("div");
+    innerDiv.classList.add("inner", data.val().sender === sender ? "me" : "notMe");
+    innerDiv.textContent = `${data.val().sender === sender ? 'You' : data.val().sender}: ${data.val().msg}`;
+
+    var deleteButton = document.createElement("button");
+    deleteButton.id = "dltMsg";
+    deleteButton.textContent = "DELETE";
+    deleteButton.onclick = () => module.dltMsg(data.key);
+
+    innerDiv.appendChild(deleteButton);
+    messageDiv.appendChild(innerDiv);
+    messages.appendChild(messageDiv);
+  }
+});
+
+        // TO DELETE MSG
+        module.dltMsg = function dltMsg(key){
+            remove(ref(db,"messages/"+key));
+        }
+
+        // WHEN MSG IS DELETED
+        onChildRemoved(ref(db,"messages"),(data)=>{
+            var msgBox = document.getElementById(data.key);
+            messages.removeChild(msgBox);
+        })
+    </script>
+
+    </div>
+  </div>
+</div>
